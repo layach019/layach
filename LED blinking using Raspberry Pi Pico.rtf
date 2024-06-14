@@ -1,14 +1,39 @@
-{\rtf1\ansi\ansicpg1252\deff0\nouicompat\deflang1033{\fonttbl{\f0\fnil\fcharset0 Calibri;}}
-{\*\generator Riched20 10.0.22621}\viewkind4\uc1 
-\pard\sa200\sl276\slmult1\f0\fs22\lang9 CODE:\par
-import machine\par
-import utime\par
-\par
-led = machine.Pin(16, machine.Pin.OUT)\par
-\par
-while True:\par
-    led.toggle()\par
-    utime.sleep(0.5)\par
+CODE:
+import time
+from machine import Pin
+import dht
+
+# Initialize the DHT22 sensor
+dht_sensor = dht.DHT22(Pin(2))
+
+# Initialize the LEDs
+led_red = Pin(14, Pin.OUT)
+led_green = Pin(15, Pin.OUT)
+
+while True:
+    try:
+        # Read temperature and humidity from the sensor
+        dht_sensor.measure()
+        temperature_celsius = dht_sensor.temperature()
+        humidity_percent = dht_sensor.humidity()
+
+        # Print the values
+        print("Temperature: {}°C, Humidity: {}%".format(temperature_celsius, humidity_percent))
+
+        # Control LEDs based on temperature and humidity
+        if temperature_celsius > 25:
+            led_red.on()
+            led_green.off()
+        else:
+            led_red.off()
+            led_green.on()
+
+    except Exception as e:
+        print("Error:", e)
+
+    # Delay for 2 seconds before reading again
+    time.sleep(2)
+
 LOGIC:\par
 1.Import the necessary modules: machine for hardware control and utime for handling time-related functions.\par
 \par
